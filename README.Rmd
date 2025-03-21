@@ -39,7 +39,6 @@ impute_missing_CpGs: A function to impute missing values on expression data usin
 eliminateMissingsMulti: a function to eliminates stepwise rows and columns comtaining missing values
 sample_generator: a function to subset a large data set into a given smaller size
 OSMI_on_aging_clock
-OSMI_Island: a version of OSMI, in which the island structure in chromoso
 ```
 
 ## 
