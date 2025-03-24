@@ -4,14 +4,14 @@ The OSMI project has been implemented for missing values imputation on expressio
 
 ## Installation
 
-The project is available on github <https://github.com/Kemda-Imsid/OSMI.git> and can be installed these ways :
+The project is available on github <https://github.com/nkchrist/OSMI.git> and can be installed these ways :
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("https://github.com/Kemda-Imsid/OSMI.git") ##recommanded
+devtools::install_github("https://github.com/nkchrist/OSMI.git") ##recommanded
 
 library(devtools)
-install_github("https://github.com/Kemda-Imsid/OSMI.git")
+install_github("https://github.com/nkchrist/OSMI.git")
 
 ###You can download the .zip data from github  
 
