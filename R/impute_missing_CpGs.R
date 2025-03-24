@@ -351,7 +351,7 @@ use_osmi_island<- function(extendedBetaData,ncores){
 impute_missing_CpGs<-function(extendedBetaData,nRows=nRows,nCols=nCols,
                     nRepeat,ncores){
 
-  df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
+ # df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
    extendedBetaData<-extendedBetaData[!rownames(extendedBetaData)%in%c("sample_id","tissue"),]
    subset<-eliminateMissingsMulti(extendedBetaData)
    subset<-extendedBetaData[subset[["rows"]],subset[["cols"]]]
