@@ -268,7 +268,7 @@ use_osmi<- function(extendedBetaData, subData,ncores){
 
 use_osmi_island<- function(extendedBetaData,ncores){
 
-  df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
+  #df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
 
   subData <-cbind("chr" =  df_annotation$chr[match(rownames(extendedBetaData), df_annotation$Name)],
                            "pos" = df_annotation$pos[match(rownames(extendedBetaData), df_annotation$Name)],
