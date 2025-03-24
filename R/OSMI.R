@@ -101,7 +101,7 @@ OSMI <-function(extendedBetaData, positionColumnName, subData=NULL) {
       # to save imputation details
       n_imputed <- length(CpGs_to_replace)
       index <- info_counter : (info_counter + n_imputed - 1)
-      
+
       info_Data[index,1] <- CpGs_to_replace
       info_Data[index,2] <- rep(sample_IDs[sample], n_imputed)
       info_Data[index,3] <- replaced_Data[CpGs_to_replace,sample_IDs[sample]]
@@ -121,14 +121,6 @@ OSMI <-function(extendedBetaData, positionColumnName, subData=NULL) {
 
 }
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("minfi")
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("IlluminaHumanMethylationEPICv2anno.20a1.hg38")
+

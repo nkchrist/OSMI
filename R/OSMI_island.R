@@ -1,6 +1,4 @@
 
-
-
 #' Missing values imputation in expression data under consideration of islands structures.
 #'
 #' @param extendedBetaData An expression data frame containing CpGs in rows and samples and  CpG position in columns.

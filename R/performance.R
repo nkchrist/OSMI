@@ -13,7 +13,7 @@
 #' @examples
 #'perfomance_check(nRows=c(400, 1000,3000,5000 ),nCols=c(1,2,5,10,50, 100, 500, 1000, 1500),nRepeat=10)
 
- perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
+perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
 
   tab<-array(,c(length(nRows),length(nCols),nRepeat))
   rownames(tab)<-nRows
@@ -33,7 +33,7 @@
 
     x<-list.files(path=paths, pattern=NULL, all.files=FALSE,
                   full.names=FALSE)
-
+    print(paste("run",n,"started", sep=" "))
     for(i in x){
       sr<-gsub("_[^_]+$", "", i)
       sc<-strsplit(sr,split = "_")[[1]][2]
@@ -87,6 +87,7 @@
   mae_tab_mean<-data.frame(matrix(nrow=length(nRows)*3*3,ncol=length(nCols)))
   colnames(mae_tab_mean)<-nCols
   n<-c()
+  Print("Statistic started")
   for(i in nRows){
       n<-c(n,paste(i,"osmi_upper",sep="_"),paste(i,"osmi_mean",sep="_"),paste(i,"osmi_lower",sep="_"),
            paste(i,"knn_upper",sep="_"),paste(i,"knn_mean",sep="_"),paste(i,"knn_lower",sep="_"),
@@ -154,7 +155,7 @@
 
     }
   }
-
+  Print("Done!")
   return(list(rmse_tab_mean,mae_tab_mean,time_tab_mean))
 }
 
@@ -170,7 +171,8 @@
 #'
 #' @examples
 #' perfomance_plot<-function(tab_mean=tab_mean)
-#' 
+#'
+
 perfomance_plot<-function(tab_mean=tab_mean){
 
 tab_mean$ID <- factor(rownames(tab_mean))
@@ -367,4 +369,7 @@ perfomance_plot.t<-function(tab_mean=tab_mean){
 #p_rmse<-perfomance_plot.t(tab_mean=time_tab_mean)
 
 
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("IlluminaHumanMethylation450kanno.ilmn12.hg19",force = TRUE)
 

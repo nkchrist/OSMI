@@ -9,25 +9,24 @@
 #'
 #' @return A data frame with 2 columns, the rmse of the imputation per samples
 #' and the length of the array used for the imputation
-#'
+#' @importFrom minfi getAnnotation
 #' @export
-
 #' @examples
 #' OSMI_on_array_density(blood_download,4)
 
-function (extendedBetaData, subset, df_annotation, ncores = ncores){
-  
+OSMI_on_array_density<-function (extendedBetaData,ncores = ncores){
+  print("Preproccesing started")
   df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
   extendedBetaData<-extendedBetaData[!rownames(extendedBetaData)%in%c("sample_id","tissue"),]
   subset<-eliminateMissingsMulti(extendedBetaData)
   subset<-extendedBetaData[subset[["rows"]],subset[["cols"]]]
-  subset.colnames <- sample(colnames(subset), 1)                                            
-  extendedBetaData <- cbind(chr = df_annotation$chr[match(rownames(extendedBetaData),df_annotation$Name)], 
-                            pos = df_annotation$pos[match(rownames(extendedBetaData),df_annotation$Name)], 
-                            strand = df_annotation$strand[match(rownames(extendedBetaData),df_annotation$Name)], extendedBetaData)                                               
-   subset <- cbind(chr = df_annotation$chr[match(rownames(subset),df_annotation$Name)], 
-                   pos = df_annotation$pos[match(rownames(subset),df_annotation$Name)], 
-                   strand = df_annotation$strand[match(rownames(subset),df_annotation$Name)], subset) 
+  subset.colnames <- sample(colnames(subset), 1)
+  extendedBetaData <- cbind(chr = df_annotation$chr[match(rownames(extendedBetaData),df_annotation$Name)],
+                            pos = df_annotation$pos[match(rownames(extendedBetaData),df_annotation$Name)],
+                            strand = df_annotation$strand[match(rownames(extendedBetaData),df_annotation$Name)], extendedBetaData)
+   subset <- cbind(chr = df_annotation$chr[match(rownames(subset),df_annotation$Name)],
+                   pos = df_annotation$pos[match(rownames(subset),df_annotation$Name)],
+                   strand = df_annotation$strand[match(rownames(subset),df_annotation$Name)], subset)
     missing_cells<-sample(rownames(subset),5000)
     subset<-subset[missing_cells,c("chr","pos","strand",subset.colnames)]
     subset.miss<-subset
@@ -38,11 +37,11 @@ function (extendedBetaData, subset, df_annotation, ncores = ncores){
     subset.miss <- subset.miss[order(subset.miss$chr,subset.miss$pos),]
     subset.miss<- split(subset.miss, f=list(subset.miss[,"chr"], subset.miss[,"strand"]))
     subset.miss<-subset.miss[order(names(subset.miss))]
-    set.seed(14184703)
     t<-colnames(extendedBetaData)[!colnames(extendedBetaData)%in%c("chr","pos","strand")]
     ncpgs_rmse<-data.frame(matrix(nrow = length(t),ncol = 2))
     rownames(ncpgs_rmse)<-t
     colnames(ncpgs_rmse)<-c("rmse","nCpGs")
+    print("Calculation started")
     for(i in t){
       x<-extendedBetaData[,c("chr","pos","strand",i),]
       x.rownames<-rownames(x[complete.cases(x),])
@@ -76,7 +75,7 @@ function (extendedBetaData, subset, df_annotation, ncores = ncores){
     ggsave("results/blood_download_ncpgs_vs_rmse170.png",
            plot = p,width =170,
            height = 109, units = "mm", dpi = 300)
-    
+
     return(list(ncpgs_rmse,p))
     }
 
