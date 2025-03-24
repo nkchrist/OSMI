@@ -369,7 +369,4 @@ perfomance_plot.t<-function(tab_mean=tab_mean){
 #p_rmse<-perfomance_plot.t(tab_mean=time_tab_mean)
 
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("IlluminaHumanMethylation450kanno.ilmn12.hg19",force = TRUE)
 
