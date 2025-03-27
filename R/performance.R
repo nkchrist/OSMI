@@ -8,12 +8,12 @@
 #' @param nRepeat A Number of runs
 #'
 #' @return A table or a list of tables containing the means values from the repetitions
-#' @export perfomance_check
+#' @export performance_check
 #'
 #' @examples
-#'perfomance_check(nRows=c(400, 1000,3000,5000 ),nCols=c(1,2,5,10,50, 100, 500, 1000, 1500),nRepeat=10)
+#'performance_check(nRows=c(400, 1000,3000,5000 ),nCols=c(1,2,5,10,50, 100, 500, 1000, 1500),nRepeat=10)
 
-perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
+performance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
 
   tab<-array(,c(length(nRows),length(nCols),nRepeat))
   rownames(tab)<-nRows
@@ -87,7 +87,7 @@ perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
   mae_tab_mean<-data.frame(matrix(nrow=length(nRows)*3*3,ncol=length(nCols)))
   colnames(mae_tab_mean)<-nCols
   n<-c()
-  Print("Statistic started")
+  print("Statistic started")
   for(i in nRows){
       n<-c(n,paste(i,"osmi_upper",sep="_"),paste(i,"osmi_mean",sep="_"),paste(i,"osmi_lower",sep="_"),
            paste(i,"knn_upper",sep="_"),paste(i,"knn_mean",sep="_"),paste(i,"knn_lower",sep="_"),
@@ -155,11 +155,11 @@ perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
 
     }
   }
-  Print("Done!")
+  print("Done!")
   return(list(rmse_tab_mean,mae_tab_mean,time_tab_mean))
 }
 
-#tab_mean<-perfomance_check(nRows=nRows,nCols=nCols,nRepeat=nRepeat)
+#tab_mean<-performance_check(nRows=nRows,nCols=nCols,nRepeat=nRepeat)
 
 
 #' Plot function to present the result in a graphic
@@ -170,27 +170,27 @@ perfomance_check<-function(nRows=nRows,nCols=nCols,nRepeat=nRepeat){
 #' @export
 #'
 #' @examples
-#' perfomance_plot<-function(tab_mean=tab_mean)
+#' performance_plot<-function(tab_mean=tab_mean)
 #'
 
-perfomance_plot<-function(tab_mean=tab_mean){
+performance_plot<-function(tab_mean=tab_mean){
 
 tab_mean$ID <- factor(rownames(tab_mean))
 
-tab_mean.melt_400<-cbind(melt(tab_mean[c("400_osmi_mean","400_knn_mean" ,"400_meth_mean"),], id='ID'),
-                         "CI_upper"=melt(tab_mean[c("400_osmi_upper","400_knn_upper" ,"400_meth_upper"),], id='ID')[,3],
-                         "CI_lower"=melt(tab_mean[c("400_osmi_lower","400_knn_lower" ,"400_meth_lower"),], id='ID')[,3])
+tab_mean.melt_400<-cbind(reshape2::melt(tab_mean[c("400_osmi_mean","400_knn_mean" ,"400_meth_mean"),], id='ID'),
+                         "CI_upper"=reshape2::melt(tab_mean[c("400_osmi_upper","400_knn_upper" ,"400_meth_upper"),], id='ID')[,3],
+                         "CI_lower"=reshape2::melt(tab_mean[c("400_osmi_lower","400_knn_lower" ,"400_meth_lower"),], id='ID')[,3])
 
-tab_mean.melt_1000<-cbind(melt(tab_mean[c("1000_osmi_mean","1000_knn_mean" ,"1000_meth_mean"),], id='ID'),
-                         "CI_upper"=melt(tab_mean[c("1000_osmi_upper","1000_knn_upper" ,"1000_meth_upper"),], id='ID')[,3],
-                         "CI_lower"=melt(tab_mean[c("1000_osmi_lower","1000_knn_lower" ,"1000_meth_lower"),], id='ID')[,3])
+tab_mean.melt_1000<-cbind(reshape2::melt(tab_mean[c("1000_osmi_mean","1000_knn_mean" ,"1000_meth_mean"),], id='ID'),
+                         "CI_upper"=reshape2::melt(tab_mean[c("1000_osmi_upper","1000_knn_upper" ,"1000_meth_upper"),], id='ID')[,3],
+                         "CI_lower"=reshape2::melt(tab_mean[c("1000_osmi_lower","1000_knn_lower" ,"1000_meth_lower"),], id='ID')[,3])
 
-tab_mean.melt_3000<-cbind(melt(tab_mean[c("3000_osmi_mean","3000_knn_mean" ,"3000_meth_mean"),], id='ID'),
-                          "CI_upper"=melt(tab_mean[c("3000_osmi_upper","3000_knn_upper" ,"3000_meth_upper"),], id='ID')[,3],
-                          "CI_lower"=melt(tab_mean[c("3000_osmi_lower","3000_knn_lower" ,"3000_meth_lower"),], id='ID')[,3])
-tab_mean.melt_5000<-cbind(melt(tab_mean[c("5000_osmi_mean","5000_knn_mean" ,"5000_meth_mean"),], id='ID'),
-                          "CI_upper"=melt(tab_mean[c("5000_osmi_upper","5000_knn_upper" ,"5000_meth_upper"),], id='ID')[,3],
-                          "CI_lower"=melt(tab_mean[c("5000_osmi_lower","5000_knn_lower" ,"5000_meth_lower"),], id='ID')[,3])
+tab_mean.melt_3000<-cbind(reshape2::melt(tab_mean[c("3000_osmi_mean","3000_knn_mean" ,"3000_meth_mean"),], id='ID'),
+                          "CI_upper"=reshape2::melt(tab_mean[c("3000_osmi_upper","3000_knn_upper" ,"3000_meth_upper"),], id='ID')[,3],
+                          "CI_lower"=reshape2::melt(tab_mean[c("3000_osmi_lower","3000_knn_lower" ,"3000_meth_lower"),], id='ID')[,3])
+tab_mean.melt_5000<-cbind(reshape2::melt(tab_mean[c("5000_osmi_mean","5000_knn_mean" ,"5000_meth_mean"),], id='ID'),
+                          "CI_upper"=reshape2::melt(tab_mean[c("5000_osmi_upper","5000_knn_upper" ,"5000_meth_upper"),], id='ID')[,3],
+                          "CI_lower"=reshape2::melt(tab_mean[c("5000_osmi_lower","5000_knn_lower" ,"5000_meth_lower"),], id='ID')[,3])
 
 
 
@@ -257,8 +257,8 @@ dev.off()
 return(list(p1,p2,p3,p4))
 }
 
-#p_mae<-perfomance_plot(tab_mean=mae_tab_mean)
-#p_rmse<-perfomance_plot(tab_mean=rmse_tab_mean)
+#p_mae<-performance_plot(tab_mean=mae_tab_mean)
+#p_rmse<-performance_plot(tab_mean=rmse_tab_mean)
 
 
 
@@ -270,7 +270,7 @@ return(list(p1,p2,p3,p4))
 #' @export
 #'
 #' @examples
-perfomance_plot.t<-function(tab_mean=tab_mean){
+performance_plot.t<-function(tab_mean=tab_mean){
 
   tab_mean$ID <- factor(rownames(tab_mean))
 
@@ -366,7 +366,7 @@ perfomance_plot.t<-function(tab_mean=tab_mean){
 }
 
 
-#p_rmse<-perfomance_plot.t(tab_mean=time_tab_mean)
+#p_rmse<-performance_plot.t(tab_mean=time_tab_mean)
 
 
 

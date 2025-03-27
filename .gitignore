@@ -6,3 +6,7 @@
 .httr-oauth
 .DS_Store
 .quarto
+blood_methylation_data/
+*.RData
+results/
+

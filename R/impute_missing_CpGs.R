@@ -168,7 +168,7 @@ extendedBetaData_prep<-function(extendedBetaData){
 
 
 
-use_osmi<- function(extendedBetaData, subData,ncores){
+use_osmi<- function(extendedBetaData, subData, df_annotation, ncores){
   subData.cc<-subData[[1]]
   missing_cells<-subData[[3]]
   subData<-data.frame(subData[[2]])
@@ -267,13 +267,13 @@ use_osmi<- function(extendedBetaData, subData,ncores){
 #' use_osmi_island(blood_download,4)
 
 use_osmi_island<- function(extendedBetaData,ncores){
-
-  #df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
-
+  
+  df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
+  extendedBetaData<-extendedBetaData[!rownames(extendedBetaData)%in%c("sample_id","tissue"),]
   subData <-cbind("chr" =  df_annotation$chr[match(rownames(extendedBetaData), df_annotation$Name)],
-                           "pos" = df_annotation$pos[match(rownames(extendedBetaData), df_annotation$Name)],
-                           "strand" =  df_annotation$strand[match(rownames(extendedBetaData), df_annotation$Name)],
-                           "Islands_Name" =  df_annotation$Islands_Name[match(rownames(extendedBetaData), df_annotation$Name)],
+                  "pos" = df_annotation$pos[match(rownames(extendedBetaData), df_annotation$Name)],
+                  "strand" =  df_annotation$strand[match(rownames(extendedBetaData), df_annotation$Name)],
+                  "Islands_Name" =  df_annotation$Islands_Name[match(rownames(extendedBetaData), df_annotation$Name)],
                   extendedBetaData)
   extendedBetaData <-extendedBetaData_prep(extendedBetaData)
   if(!is.null(extendedBetaData[[2]])){
@@ -281,13 +281,11 @@ use_osmi_island<- function(extendedBetaData,ncores){
   }
   extendedBetaData<-extendedBetaData[[1]]
   print("extended data ready")
-
+  
   subData <- subData[subData[,"Islands_Name"]!="",]
   subData.table<-data.frame(table(subData[,"Islands_Name"]))
   x<-subData.table[subData.table$Freq<=1,]$Var1
   subData.miss<-subData[!subData[,"Islands_Name"]%in%x,]
-  #x<-sample(subData.table$Var1,5000)
-  #subData.miss<-subData[subData$Islands_Name%in%x,]
   missing_cells <- data.frame(which(is.na(subData.miss[,!colnames(subData.miss)%in%c("chr","pos","strand","Islands_Name")])
                                     , arr.ind = TRUE))
   missing_cells$colnames<-colnames(subData.miss[,missing_cells[,2]])
@@ -300,27 +298,25 @@ use_osmi_island<- function(extendedBetaData,ncores){
   }
   subData.miss<-subData.miss[[1]]
   print("subdata ready")
-
-
-
+  
+  
+  
   v_0<-c()
   for(i in 1:length(subData.miss)){
     if(nrow(subData.miss[[i]])==0 | sum(is.na(subData.miss[[i]]))==0){
       v_0<-c(v_0,i)
     }
   }
-
+  
   subData.miss[v_0]<-NULL
   v<-names(extendedBetaData)[!(names(extendedBetaData) %in% names(subData.miss))]
   extendedBetaData[v]<-NULL
   subData.miss<-subData.miss[order(names(subData.miss))]
   extendedBetaData<-extendedBetaData[order(names(extendedBetaData))]
-
+  
   subData.miss.imp_island<-mcmapply(OSMI,subData.miss.island,"pos",subData.miss.island,mc.cores=ncores)
   subData.miss.imp<-mcmapply(OSMI,extendedBetaData,"pos",subData.miss,mc.cores=ncores)
-  subData.miss.imp_island<-dataFrame.imputed(subData.miss.imp_island,missing_cells)
-  subData.miss.imp<-dataFrame.imputed(subData.miss.imp,missing_cells)
-
+  
   return(list(subData.miss.imp,subData.miss.imp_island))
 }
 
@@ -351,7 +347,7 @@ use_osmi_island<- function(extendedBetaData,ncores){
 impute_missing_CpGs<-function(extendedBetaData,nRows=nRows,nCols=nCols,
                     nRepeat,ncores){
 
- # df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
+   df_annotation<-data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))[,c("chr","strand","Name","pos","Islands_Name")]
    extendedBetaData<-extendedBetaData[!rownames(extendedBetaData)%in%c("sample_id","tissue"),]
    subset<-eliminateMissingsMulti(extendedBetaData)
    subset<-extendedBetaData[subset[["rows"]],subset[["cols"]]]
@@ -360,13 +356,21 @@ impute_missing_CpGs<-function(extendedBetaData,nRows=nRows,nCols=nCols,
    if(!is.null(extendedBetaData[[2]])){
      subset<-subset[!rownames(subset)%in%extendedBetaData[[2]],]
    }
+   
   extendedBetaData<-extendedBetaData[[1]]
 
+  #create results dir
+  if(!dir.exists(file.path(paste(getwd(),"results",sep = "/")))){
+    dir.create(file.path(paste(getwd(),"results",sep = "/")))
+  }
+  
   for(n in 1:nRepeat){
 
     ifelse(!dir.exists(file.path(paste(getwd(),"results",sep = "/"), paste("results",n,sep = "_"))),
            dir.create(file.path(paste(getwd(),"results",sep = "/"), paste("results",n,sep = "_"))), "directory exists")
+    
     print(paste("Subfolder result",n,"created", sep=" "))
+    
     for(i in nRows){
       for(j in nCols){
         subData<-sample_generator(extendedBetaData=subset,rnum=i,cnum=j)  ##change input data according
